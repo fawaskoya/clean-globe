@@ -232,6 +232,209 @@ async function main() {
     }
   });
 
+  // Seed Testimonials
+  console.log("🌱 Seeding testimonials...");
+  const testimonials = [
+    {
+      name: "Sarah Johnson",
+      company: "TechForward Solutions",
+      role: "COO",
+      content: "CGC helped us navigate the complex landscape of ESG reporting. Their strategic insights were instrumental in our successful TCFD disclosure.",
+      rating: 5,
+      displayOrder: 1,
+      published: true,
+    },
+    {
+      name: "Ahmed Al-Mansoori",
+      company: "Gulf Infrastructure",
+      role: "Project Director",
+      content: "The energy audit conducted by the Clean Globe team identified savings we hadn't even considered. Highly professional and results-driven.",
+      rating: 5,
+      displayOrder: 2,
+      published: true,
+    },
+    {
+      name: "Emily Chen",
+      company: "Global Retail Inc.",
+      role: "Sustainability Manager",
+      content: "Achieving our net-zero targets seemed impossible until we partnered with CGC. Their roadmap was practical, scientifically sound, and easy to implement.",
+      rating: 5,
+      displayOrder: 3,
+      published: true,
+    }
+  ];
+
+  for (const testimonial of testimonials) {
+    await prisma.testimonial.create({
+      data: testimonial,
+    });
+  }
+
+  // Seed Blog Posts
+  console.log("🌱 Seeding blog posts...");
+  const blogPosts = [
+    {
+      slug: "energy-audit-explained",
+      title: "The Energy Audit: Foundation for Operational Efficiency",
+      excerpt: "A technical overview of energy auditing levels and their role in identifying capital-free savings and capital investment opportunities.",
+      tags: JSON.stringify(["Energy", "Efficiency", "Cost Saving"]),
+      content: `# The Energy Audit: Foundation for Operational Efficiency
+
+Effective energy management necessitates precise measurement. An energy audit serves as the technical baseline for reducing operational expenditure and carbon emissions.
+
+## Audit Scope and Levels
+
+We strictly follow ASHRAE standards for energy audits, which categorize assessments into three levels:
+
+### Level 1: Walk-Through Assessment
+A preliminary review to identify low-cost/no-cost measures and obvious inefficiencies. This level provides a rough estimate of savings and costs, suitable for prioritizing further study.
+
+### Level 2: Energy Survey and Analysis
+A detailed breakdown of energy use. This involves analyzing utility bills over a 12-24 month period and quantifying the breakdown of energy consumption by end-use (HVAC, lighting, process loads). It produces a clear list of Energy Conservation Measures (ECMs) with calculated ROI.
+
+### Level 3: Detailed Analysis of Capital-Intensive Modifications
+Required for major capital investments. This involves comprehensive data collection and engineering analysis to provide a high degree of confidence for financial decision-making.
+
+## Deliverables and Value
+
+The primary output is a prioritized roadmap of ECMs. Experience shows that operational adjustments identified in Level 1 and 2 audits often yield 5-10% savings with minimal capital outlay, funding further efficiency projects.`,
+      published: true,
+      createdAt: new Date("2024-06-01"),
+    },
+    {
+      slug: "esg-strategy-value",
+      title: "The Strategic Value of ESG",
+      excerpt: "Moving beyond compliance: How Environmental, Social, and Governance frameworks drive risk mitigation and capital access.",
+      tags: JSON.stringify(["ESG", "Strategy", "Governance"]),
+      content: `# The Strategic Value of ESG
+
+Environmental, Social, and Governance (ESG) factors have transitioned from peripheral corporate social responsibility activities to central strategic pillars. For enterprises in the GCC region, a robust ESG framework is increasingly a prerequisite for market competitiveness and capital access.
+
+## From Compliance to Capital Strategy
+
+While regulatory compliance remains a baseline driver, the maturation of ESG demonstrates its role in value creation. Institutional investors and financial institutions utilize ESG performance as a proxy for management quality and risk resilience.
+
+1.  **Capital Access**: Evidence of non-financial risk management is often required for favorable lending terms and attracting institutional equity.
+2.  **Risk Mitigation**: Proactive management of environmental and social risks prevents costly operational disruptions and reputational damage.
+3.  **Operational Resilience**: Sustainable supply chains and resource efficiency lower exposure to commodity price volatility.
+
+## Implementation Approach
+
+A pragmatic ESG strategy begins with a Materiality Assessment to identify issues relevant to the specific business model and sector. This ensures resources are allocated to areas with excessive financial and social impact, rather than generic checkbox exercises.`,
+      published: true,
+      createdAt: new Date("2024-05-15"),
+    },
+    {
+      slug: "getting-started-sustainability",
+      title: "Initiating Corporate Sustainability",
+      excerpt: "A structured approach to establishing a corporate sustainability baseline and setting initial targets.",
+      tags: JSON.stringify(["Getting Started", "Guide", "Strategy"]),
+      content: `# Initiating Corporate Sustainability
+
+Effective sustainability programs are built on data, not vague aspirations. For organizations initiating this process, the focus must be on establishing a credible baseline from which to measure progress.
+
+## Phase 1: Baseline Assessment
+
+Before setting targets, organizations must quantify their current impact.
+*   **Utility Data**: Compile 12-24 months of electricity, water, and waste data.
+*   **Supply Chain**: Map Tier 1 suppliers to identify primary environmental and social risks.
+
+## Phase 2: Engagement and Governance
+
+Sustainability cannot sit solely with a specific department.
+*   **Executive Sponsorship**: Designate a board-level sponsor to ensure strategic alignment.
+*   **Cross-Functional Teams**: operationalize goals through a "Green Team" or steering committee representing Operations, HR, Finance, and Procurement.
+
+## Phase 3: Target Setting
+
+Adopting "SMART" (Specific, Measurable, Achievable, Relevant, Time-bound) goals is critical. Avoid broad statements like "becoming green." Instead, commit to specific metrics, such as "Reducing Scope 2 emissions by 15% by 2026."`,
+      published: true,
+      createdAt: new Date("2024-07-01"),
+    },
+    {
+      slug: "net-zero-roadmap",
+      title: "Net Zero: Definitions and Hierarchy of Action",
+      excerpt: "Defining Net Zero boundaries (Scope 1, 2, 3) and prioritizing reduction over offsetting.",
+      tags: JSON.stringify(["Net Zero", "Strategy", "Carbon"]),
+      content: `# Net Zero: Definitions and Hierarchy of Action
+
+Achieving Net Zero involves balancing greenhouse gases emitted with those removed from the atmosphere. It is a rigorous technical challenge requiring a clear definition of boundaries and a strict hierarchy of mitigation actions.
+
+## Defining the Boundary
+
+Clarity on scope is essential for credible reporting.
+*   **Net Zero Energy**: Often limited to site-based energy consumption and on-site generation.
+*   **Net Zero Carbon**: Typically covers operational emissions (Scope 1 & 2).
+*   **Net Zero Standard**: The Science Based Targets initiative (SBTi) requires coverage of value chain emissions (Scope 3), which often constitute the majority of an organization's footprint.
+
+## The Mitigation Hierarchy
+
+Credible Net Zero strategies prioritize internal reduction before compensation.
+
+1.  **Demand Reduction**: Eliminate unnecessary energy use through efficiency and behavioral change.
+2.  **Decarbonization**: Switch to lower-carbon energy vectors (e.g., electrification of fleets, renewable energy procurement).
+3.  **Compensation**: Only after maximizing reduction and decarbonization should high-quality carbon removals be used to neutralize residual emissions.
+
+This sequence ensures that the strategy drives tangible operational improvements rather than simply paying for external offsets.`,
+      published: true,
+      createdAt: new Date("2024-06-25"),
+    },
+    {
+      slug: "sustainable-green-offices",
+      title: "Sustainable Office Operations",
+      excerpt: "Operational strategies for high-performance workspaces, focusing on efficiency and occupant health.",
+      tags: JSON.stringify(["Sustainability", "Green Buildings", "Operations"]),
+      content: `# Sustainable Office Operations
+
+The built environment accounts for a significant portion of global carbon emissions. For tenants and owners, sustainable office operations offer a dual benefit: reduced operating expenditure and improved occupant health and productivity.
+
+## Operational Efficiency
+
+High-performance offices go beyond simple LED upgrades. They utilize building management systems (BMS) to optimize HVAC and lighting schedules based on occupancy. Rigorous waste audits and diversion strategies (recycling, composting) further reduce the facility's environmental footprint.
+
+## Indoor Environmental Quality (IEQ)
+
+Frameworks like WELL and LEED emphasize the impact of the indoor environment on human cognitive function.
+*   **Air Quality**: Continuous monitoring of CO2 and VOCs ensures adequate ventilation rates.
+*   **Biophilia**: Integrating natural elements reduces stress and improves focus.
+*   **Thermal Comfort**: providing zonal control to occupants.
+
+Evidence suggests that certifications like LEED O+M (Operations and Maintenance) correlate with higher asset value and retention rates, validating the business case for sustainable facility management.`,
+      published: true,
+      createdAt: new Date("2024-05-20"),
+    },
+    {
+      slug: "tcfd-reporting-guide",
+      title: "TCFD Reporting Framework",
+      excerpt: "An overview of the Task Force on Climate-related Financial Disclosures (TCFD) pillars: Governance, Strategy, Risk Management, and Metrics.",
+      tags: JSON.stringify(["Climate Change", "Risk Management", "Reporting"]),
+      content: `# TCFD Reporting Framework
+
+The Task Force on Climate-related Financial Disclosures (TCFD) provides the global standard for disclosing climate-related risks and opportunities. It shifts the focus from backward-looking sustainability reports to forward-looking financial risk assessment.
+
+## The Four Pillars
+
+1.  **Governance**: Disclose the organization's governance around climate-related risks and opportunities, specifically board oversight and management's role.
+2.  **Strategy**: Disclose the actual and potential impacts of climate-related risks and opportunities on the organization's businesses, strategy, and financial planning. This often involves scenario analysis (e.g., a 2°C vs. 4°C warming scenario).
+3.  **Risk Management**: Disclose how the organization identifies, assesses, and manages climate-related risks.
+4.  **Metrics and Targets**: Disclose the metrics and targets used to assess and manage relevant climate-related risks and opportunities where such information is material.
+
+## Strategic Relevance
+
+Adopting the TCFD framework prepares organizations for emerging regulatory mandates and satisfies the due diligence requirements of international investors seeking to understand transition and physical climate risks within their portfolios.`,
+      published: true,
+      createdAt: new Date("2024-06-10"),
+    }
+  ];
+
+  for (const post of blogPosts) {
+    await prisma.blogPost.upsert({
+      where: { slug: post.slug },
+      update: post,
+      create: post,
+    });
+  }
+
   console.log("✅ Database seeded successfully!");
   console.log("\n📋 Admin Credentials:");
   console.log("   Email: admin@thecleanglobe.com");

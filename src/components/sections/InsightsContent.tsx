@@ -5,7 +5,15 @@ import { CTASection } from "@/components/sections/CTASection";
 import { BlogList } from "@/components/features/BlogList";
 import { motion } from "framer-motion";
 import { SparklesIcon } from "@heroicons/react/24/solid";
-import { BlogPost } from "@/lib/posts";
+
+interface BlogPost {
+    slug: string;
+    title: string;
+    date: string;
+    excerpt: string;
+    tags: string[];
+    content: string;
+}
 
 interface InsightsContentProps {
     posts: BlogPost[];

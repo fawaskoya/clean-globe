@@ -159,35 +159,12 @@ export function HomePageContent({ services, testimonials }: HomePageContentProps
         </section>
 
         {/* Testimonials Section - Cream Background */}
-        <Testimonials
-          testimonials={testimonials.length > 0 ? testimonials : [
-            {
-              id: "mock-1",
-              name: "Sarah Johnson",
-              company: "TechForward Solutions",
-              role: "COO",
-              content: "CGC helped us navigate the complex landscape of ESG reporting. Their strategic insights were instrumental in our successful TCFD disclosure.",
-              rating: 5,
-            },
-            {
-              id: "mock-2",
-              name: "Ahmed Al-Mansoori",
-              company: "Gulf Infrastructure",
-              role: "Project Director",
-              content: "The energy audit conducted by the Clean Globe team identified savings we hadn't even considered. Highly professional and results-driven.",
-              rating: 5,
-            },
-            {
-              id: "mock-3",
-              name: "Emily Chen",
-              company: "Global Retail Inc.",
-              role: "Sustainability Manager",
-              content: "Achieving our net-zero targets seemed impossible until we partnered with CGC. Their roadmap was practical, scientifically sound, and easy to implement.",
-              rating: 5,
-            }
-          ]}
-          className="bg-cream"
-        />
+        {testimonials.length > 0 && (
+          <Testimonials
+            testimonials={testimonials}
+            className="bg-cream"
+          />
+        )}
 
         {/* Quick Contact Form Section - Olive Background */}
         <section className="bg-olive py-24 lg:py-32">

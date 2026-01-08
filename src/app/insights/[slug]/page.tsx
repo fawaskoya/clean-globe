@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPostBySlug } from "@/lib/posts";
+import { db } from "@/lib/db";
 import markdownToHtml from "@/lib/markdown";
 import { Button } from "@/components/ui/Button";
 
-import { getAllPosts } from "@/lib/posts";
-
 export async function generateStaticParams() {
-    const posts = getAllPosts();
+    const posts = await db.blogPost.findMany({
+        where: { published: true },
+        select: { slug: true },
+    });
     return posts.map((post) => ({
         slug: post.slug,
     }));
@@ -15,7 +16,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const post = getPostBySlug(slug);
+    const post = await db.blogPost.findUnique({
+        where: { slug },
+        select: { title: true, excerpt: true },
+    });
     if (!post) return { title: "Post Not Found" };
     return {
         title: post.title,
@@ -25,12 +29,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const post = getPostBySlug(slug);
+    const post = await db.blogPost.findUnique({
+        where: { slug },
+    });
 
     if (!post) {
         notFound();
     }
 
+    const tags = JSON.parse(post.tags) as string[];
+    const dateStr = post.createdAt.toISOString().split('T')[0];
     const contentHtml = await markdownToHtml(post.content);
 
     return (
@@ -41,15 +49,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                         ← Back to Insights
                     </Link>
                     <div className="flex gap-2 mb-4">
-                        {post.tags.map(tag => (
+                        {tags.map(tag => (
                             <span key={tag} className="inline-flex items-center rounded-full bg-lime/10 px-2 py-1 text-xs font-medium text-forest ring-1 ring-inset ring-lime/20">{tag}</span>
                         ))}
                     </div>
                     <h1 className="text-4xl font-bold tracking-tight text-forest font-serif sm:text-5xl mb-4">
                         {post.title}
                     </h1>
-                    <time dateTime={post.date} className="text-gray-500">
-                        {post.date}
+                    <time dateTime={dateStr} className="text-gray-500">
+                        {dateStr}
                     </time>
                 </div>
 
