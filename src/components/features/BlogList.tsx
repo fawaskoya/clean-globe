@@ -2,9 +2,17 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { BlogPost } from "@/lib/posts";
 import { MagnifyingGlassIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
+
+interface BlogPost {
+    slug: string;
+    title: string;
+    date: string;
+    excerpt: string;
+    tags: string[];
+    content: string;
+}
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -135,7 +143,7 @@ export function BlogList({ posts }: { posts: BlogPost[] }) {
                                             ease: "easeInOut",
                                         }}
                                     />
-                                    
+
                                     <div className="flex-1 relative z-10">
                                         <motion.p
                                             className="text-sm font-medium text-lime mb-3"
