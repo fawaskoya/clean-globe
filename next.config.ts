@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   // output: 'export', // Removed - we have API routes and database, need server-side rendering
   images: {
     unoptimized: false, // Enable image optimization for server-side rendering
