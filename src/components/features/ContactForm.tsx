@@ -4,6 +4,12 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { NAV_LINKS } from "@/lib/navigation";
+
+const SERVICE_OPTIONS = [
+    "General Inquiry",
+    ...(NAV_LINKS.find((l) => l.href === "/services")?.children?.map((c) => c.name) ?? []),
+];
 
 export function ContactForm() {
     const { executeRecaptcha } = useGoogleReCaptcha();
@@ -197,12 +203,9 @@ export function ContactForm() {
                             onChange={handleChange}
                             value={formData.service}
                         >
-                            <option>General Inquiry</option>
-                            <option>ESG Advisory</option>
-                            <option>Sustainability Advisory</option>
-                            <option>Energy Advisory</option>
-                            <option>Climate Change Advisory</option>
-                            <option>Net Zero Advisory</option>
+                            {SERVICE_OPTIONS.map((opt) => (
+                                <option key={opt}>{opt}</option>
+                            ))}
                         </select>
                     </div>
                 </div>

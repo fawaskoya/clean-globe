@@ -3,11 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "prisma generate --schema=prisma/schema.local.prisma",
     "dev": "next dev",
-    "build": "npx prisma generate && npx prisma db push && npm run db:seed && next build",
+    "build": "prisma generate && prisma db push && next build",
     "start": "next start",
     "lint": "eslint",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:push:local": "prisma db push --schema=prisma/schema.local.prisma",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:seed:local": "prisma generate --schema=prisma/schema.local.prisma && tsx prisma/seed.ts",
+    "db:cleanup": "tsx prisma/cleanup-demo-content.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

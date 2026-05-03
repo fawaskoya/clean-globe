@@ -10,12 +10,21 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const pathname = usePathname();
   const router = useRouter();
+  const isLoginRoute = pathname === "/admin/login";
 
   useEffect(() => {
-    if (status === "unauthenticated" && pathname !== "/admin/login") {
+    if (!isLoginRoute && status === "unauthenticated") {
       router.push("/admin/login");
     }
-  }, [status, pathname, router]);
+  }, [isLoginRoute, status, router]);
+
+  // The login page must always render — even while the session call is
+  // pending or returns an error. Otherwise a transient session-API failure
+  // (e.g., misconfigured NEXTAUTH_URL on Vercel) traps the user on a spinner
+  // and they cannot recover.
+  if (isLoginRoute) {
+    return <>{children}</>;
+  }
 
   if (status === "loading") {
     return (
@@ -26,10 +35,6 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
         </div>
       </div>
     );
-  }
-
-  if (pathname === "/admin/login") {
-    return <>{children}</>;
   }
 
   if (!session) {
@@ -50,4 +55,3 @@ export default function AdminLayoutWrapper({
     </SessionProvider>
   );
 }
-

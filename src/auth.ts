@@ -13,10 +13,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials: any): Promise<any> {
-        console.log("Attempting authorization for:", credentials?.email);
-
         if (!credentials?.email || !credentials?.password) {
-          console.log("Missing credentials");
           return null;
         }
 
@@ -25,7 +22,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
 
         if (!user) {
-          console.log("User not found:", credentials.email);
           return null;
         }
 
@@ -35,21 +31,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         );
 
         if (!isPasswordValid) {
-          console.log("Invalid password for user:", credentials.email);
           return null;
         }
-
-        console.log("Authorization successful for user:", user.email);
 
         return {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role as "ADMIN" | "EDITOR",
+          role: user.role as Role,
         };
       },
     }),
   ],
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -71,6 +67,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   secret: process.env.NEXTAUTH_SECRET,
   trustHost: true,
-  debug: true,
+  debug: process.env.NODE_ENV === "development",
 });
-

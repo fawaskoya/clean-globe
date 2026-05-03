@@ -94,22 +94,8 @@ export default function Footer() {
                                     </li>
                                 </ul>
 
-                                <div className="mt-10">
-                                    <h3 className="text-sm font-semibold leading-6 text-white flex items-center gap-2">
-                                        <span className="h-1 w-4 bg-lime rounded-full" />
-                                        Resources
-                                    </h3>
-                                    <ul role="list" className="mt-6 space-y-4">
-                                        <li>
-                                            <Link
-                                                href="/admin/login"
-                                                className="text-sm leading-6 text-gray-300 hover:text-lime transition-colors"
-                                            >
-                                                Admin Portal
-                                            </Link>
-                                        </li>
-                                    </ul>
-                                </div>
+                                {/* Admin Portal link intentionally not exposed in the public footer.
+                                    Staff bookmark /admin/login directly. */}
                             </div>
                         </div>
                         <div className="md:grid md:grid-cols-1 md:gap-8">
