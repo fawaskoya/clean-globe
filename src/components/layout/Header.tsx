@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { COMPANY_INFO } from "@/lib/constants";
-import { NAV_LINKS } from "@/lib/navigation";
+import { NAV_LINKS, type NavLink } from "@/lib/navigation";
 import { DropdownMenu } from "./DropdownMenu";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -18,6 +18,7 @@ export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+    const [navLinks, setNavLinks] = useState<NavLink[]>(NAV_LINKS);
     const pathname = usePathname();
 
     useEffect(() => {
@@ -26,6 +27,29 @@ export default function Header() {
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    // Fetch live services and rebuild the Services dropdown from the DB.
+    useEffect(() => {
+        fetch("/api/public/services")
+            .then((r) => r.json())
+            .then((services: Array<{ name: string; slug: string }>) => {
+                if (!Array.isArray(services) || services.length === 0) return;
+                setNavLinks((prev) =>
+                    prev.map((link) =>
+                        link.href === "/services"
+                            ? {
+                                  ...link,
+                                  children: services.map((s) => ({
+                                      name: s.name,
+                                      href: `/services/${s.slug}`,
+                                  })),
+                              }
+                            : link
+                    )
+                );
+            })
+            .catch(() => {}); // keep static fallback on error
     }, []);
 
     const isActive = (href: string) => {
@@ -109,7 +133,7 @@ export default function Header() {
 
                 {/* Desktop Navigation Links */}
                 <div className="hidden lg:flex lg:gap-x-8 xl:gap-x-12">
-                    {NAV_LINKS.map((item, index) => {
+                    {navLinks.map((item, index) => {
                         const active = isActive(item.href);
 
                         // Check if any child is active
@@ -255,7 +279,7 @@ export default function Header() {
                             <div className="mt-6 flow-root">
                                 <div className="-my-6 divide-y divide-gray-200">
                                     <div className="space-y-1 py-6">
-                                        {NAV_LINKS.map((item, index) => {
+                                        {navLinks.map((item, index) => {
                                             const active = isActive(item.href);
                                             const hasActiveChild = item.children?.some(child =>
                                                 isActive(child.href) || child.children?.some(subChild => isActive(subChild.href))

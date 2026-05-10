@@ -12,9 +12,9 @@ export function ContactForm() {
     useEffect(() => {
         fetch("/api/public/services")
             .then((r) => r.json())
-            .then((names: string[]) => {
-                if (Array.isArray(names) && names.length > 0) {
-                    setServiceOptions(["General Inquiry", ...names]);
+            .then((services: Array<{ name: string; slug: string }>) => {
+                if (Array.isArray(services) && services.length > 0) {
+                    setServiceOptions(["General Inquiry", ...services.map((s) => s.name)]);
                 }
             })
             .catch(() => {}); // keep default on error
