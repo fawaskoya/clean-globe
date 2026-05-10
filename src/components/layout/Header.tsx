@@ -32,9 +32,14 @@ export default function Header() {
     // Fetch live services and rebuild the Services dropdown from the DB.
     useEffect(() => {
         fetch("/api/public/services")
-            .then((r) => r.json())
+            .then(async (r) => {
+                if (!r.ok) throw new Error("services fetch failed");
+                return r.json();
+            })
             .then((services: Array<{ name: string; slug: string }>) => {
-                if (!Array.isArray(services) || services.length === 0) return;
+                if (!Array.isArray(services)) return;
+                // Use the DB result even when empty — empty means no
+                // published services, so the dropdown should be empty.
                 setNavLinks((prev) =>
                     prev.map((link) =>
                         link.href === "/services"
@@ -49,7 +54,7 @@ export default function Header() {
                     )
                 );
             })
-            .catch(() => {}); // keep static fallback on error
+            .catch(() => {}); // keep static fallback only on network/server error
     }, []);
 
     const isActive = (href: string) => {

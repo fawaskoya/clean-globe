@@ -11,7 +11,10 @@ export async function GET() {
       orderBy: { createdAt: "asc" },
     });
     return NextResponse.json(services);
-  } catch {
-    return NextResponse.json([], { status: 200 });
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Failed to load services" },
+      { status: 500 }
+    );
   }
 }
