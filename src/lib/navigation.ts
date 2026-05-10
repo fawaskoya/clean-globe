@@ -24,8 +24,6 @@ export const NAV_LINKS: NavLink[] = [
       { name: "Energy Advisory", href: "/services/energy-advisory" },
       { name: "Climate Change Advisory", href: "/services/climate-change-advisory" },
       { name: "Net Zero Advisory", href: "/services/net-zero-advisory" },
-      { name: "Technology Solutions", href: "/services/sustainability-technology" },
-      { name: "Training", href: "/services/sustainability-training" },
     ],
   },
   { name: "Projects", href: "/projects" },

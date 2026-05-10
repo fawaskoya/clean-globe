@@ -104,42 +104,4 @@ export const ALL_SERVICES: ServiceData[] = [
             { question: "Do you provide monitoring tools?", answer: "We specify and can help implement dashboard systems to track utility performance against targets." },
         ],
     },
-    {
-        slug: "sustainability-technology",
-        name: "Technology Solutions",
-        shortDescription: "Innovative software and monitoring tools for real-time sustainability management.",
-        fullDescription: "We leverage cutting-edge technology to streamline sustainability management. From precise carbon accounting software to real-time energy monitoring dashboards, our digital solutions turn complex data into actionable insights.",
-        deliverables: [
-            "Carbon accounting software implementation",
-            "Real-time energy monitoring dashboards",
-            "Supply chain data platforms",
-            "IoT sensor integration",
-            "Automated ESG reporting tools",
-        ],
-        timeline: "Implementation varies from 4-12 weeks depending on system complexity.",
-        faqs: [
-            { question: "Do you build custom software?", answer: "We partner with leading tech providers and can configure custom dashboards to meet your specific needs." },
-            { question: "Can it integrate with our ERP?", answer: "Yes, our solutions are designed to connect with existing enterprise resource planning systems." },
-            { question: "Is the data secure?", answer: "We prioritize data security and ensure all platforms comply with global data protection standards." },
-        ],
-    },
-    {
-        slug: "sustainability-training",
-        name: "Training & Capacity Building",
-        shortDescription: "Empower your workforce with the knowledge to drive internal sustainability initiatives.",
-        fullDescription: "True transformation requires culture change. We provide comprehensive training programs designed to upskill your workforce, from executive boardrooms to operational teams, ensuring sustainability is understood and practiced at every level.",
-        deliverables: [
-            "Executive leadership workshops",
-            "Sustainability fundamentals training",
-            "Technical skill-building (e.g., carbon accounting)",
-            "Employee engagement programs",
-            "customized e-learning modules",
-        ],
-        timeline: "Workshops range from half-days to multi-week certification programs.",
-        faqs: [
-            { question: "Can you train our board members?", answer: "Yes, we offer high-level sessions focused on governance, risk, and strategic oversight for executives." },
-            { question: "Do you offer certification?", answer: "We provide certificates of completion and can prepare teams for external accreditations." },
-            { question: "Is it in-person or online?", answer: "We offer both delivery formats to suit your organization's preference and logistics." },
-        ],
-    },
 ];
