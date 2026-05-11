@@ -1,25 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { NAV_LINKS } from "@/lib/navigation";
+
+const SERVICE_OPTIONS = [
+    "General Inquiry",
+    ...(NAV_LINKS.find((l) => l.href === "/services")?.children?.map((c) => c.name) ?? []),
+];
 
 export function ContactForm() {
     const { executeRecaptcha } = useGoogleReCaptcha();
-    const [serviceOptions, setServiceOptions] = useState<string[]>(["General Inquiry"]);
-
-    useEffect(() => {
-        fetch("/api/public/services")
-            .then((r) => r.json())
-            .then((services: Array<{ name: string; slug: string }>) => {
-                if (Array.isArray(services) && services.length > 0) {
-                    setServiceOptions(["General Inquiry", ...services.map((s) => s.name)]);
-                }
-            })
-            .catch(() => {}); // keep default on error
-    }, []);
-
     const [formData, setFormData] = useState({
         name: "",
         company: "",
@@ -210,7 +203,7 @@ export function ContactForm() {
                             onChange={handleChange}
                             value={formData.service}
                         >
-                            {serviceOptions.map((opt) => (
+                            {SERVICE_OPTIONS.map((opt) => (
                                 <option key={opt}>{opt}</option>
                             ))}
                         </select>
