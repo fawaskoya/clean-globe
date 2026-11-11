@@ -129,3 +129,24 @@ model AdvisoryBoardMember {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+model CourseBanner {
+  id            String   @id @default(cuid())
+  providerName  String?  // e.g. "ISEP"
+  providerTagline String? // e.g. "Institute of Sustainability & Environmental Professionals"
+  logoUrl       String?
+  badge         String?  // e.g. "Certified Courses"
+  badgeNote     String?  // e.g. "Commencing December 2026"
+  headline      String
+  subheadline   String?
+  description   String?
+  coursesIntro  String?  // e.g. "Courses we are offering -"
+  courses       String   // JSON string array of course names
+  footerText    String?
+  ctaLabel      String   @default("Enroll Now")
+  ctaHref       String?  // defaults to /contact?course=...
+  displayOrder  Int      @default(0)
+  published     Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

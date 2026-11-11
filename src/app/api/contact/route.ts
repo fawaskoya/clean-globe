@@ -2,10 +2,21 @@ import { NextResponse } from "next/server";
 import { COMPANY_INFO } from "@/lib/constants";
 import { db } from "@/lib/db";
 
+// Escape visitor-supplied text before putting it into the HTML email.
+function esc(value: unknown): string {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { name, email, company, phone, service, message, consent, recaptchaToken } = body;
+        const { name, email, company, phone, message, consent, recaptchaToken } = body;
+        const service: string = (typeof body.service === "string" && body.service.trim()) || "General Inquiry";
 
         // Validate required fields
         if (!name || !email || !message) {
@@ -51,7 +62,8 @@ export async function POST(request: Request) {
             }
         }
 
-        // Save to database
+        // Save to database (this is the source of truth for the admin "Contact Enquiries" page)
+        let saved = false;
         try {
             await db.contactSubmission.create({
                 data: {
@@ -63,6 +75,7 @@ export async function POST(request: Request) {
                     message,
                 },
             });
+            saved = true;
         } catch (dbError) {
             console.error("Database error:", dbError);
             // Continue to send email even if DB save fails
@@ -79,6 +92,12 @@ export async function POST(request: Request) {
             console.log(`Message: ${message}`);
             console.log("----------------------");
 
+            if (!saved) {
+                return NextResponse.json(
+                    { message: "We could not record your enquiry. Please try again later or contact us directly." },
+                    { status: 500 }
+                );
+            }
             return NextResponse.json(
                 { message: "Development mode: Email logged to console." },
                 { status: 200 }
@@ -93,7 +112,8 @@ export async function POST(request: Request) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                from: "CGC Website <onboarding@resend.dev>", // You'll need to verify your domain with Resend
+                // Set RESEND_FROM_EMAIL (e.g. "CGC Website <noreply@thecleanglobe.com>") once the domain is verified in Resend.
+                from: process.env.RESEND_FROM_EMAIL || "CGC Website <onboarding@resend.dev>",
                 to: COMPANY_INFO.email,
                 reply_to: email,
                 subject: `New Contact Form Inquiry: ${service} - ${name}`,
@@ -121,35 +141,35 @@ Reply directly to this email to respond to ${name} at ${email}.
                         <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
                             <tr>
                                 <td style="padding: 8px 0; font-weight: bold; color: #031926;">Name:</td>
-                                <td style="padding: 8px 0; color: #333;">${name}</td>
+                                <td style="padding: 8px 0; color: #333;">${esc(name)}</td>
                             </tr>
                             <tr>
                                 <td style="padding: 8px 0; font-weight: bold; color: #031926;">Company:</td>
-                                <td style="padding: 8px 0; color: #333;">${company || "Not provided"}</td>
+                                <td style="padding: 8px 0; color: #333;">${esc(company || "Not provided")}</td>
                             </tr>
                             <tr>
                                 <td style="padding: 8px 0; font-weight: bold; color: #031926;">Email:</td>
-                                <td style="padding: 8px 0; color: #333;"><a href="mailto:${email}">${email}</a></td>
+                                <td style="padding: 8px 0; color: #333;"><a href="mailto:${esc(email)}">${esc(email)}</a></td>
                             </tr>
                             <tr>
                                 <td style="padding: 8px 0; font-weight: bold; color: #031926;">Phone:</td>
-                                <td style="padding: 8px 0; color: #333;">${phone || "Not provided"}</td>
+                                <td style="padding: 8px 0; color: #333;">${esc(phone || "Not provided")}</td>
                             </tr>
                             <tr>
                                 <td style="padding: 8px 0; font-weight: bold; color: #031926;">Service Interest:</td>
-                                <td style="padding: 8px 0; color: #333;">${service}</td>
+                                <td style="padding: 8px 0; color: #333;">${esc(service)}</td>
                             </tr>
                         </table>
                         <div style="margin: 20px 0;">
                             <h3 style="color: #031926; margin-bottom: 10px;">Message:</h3>
                             <div style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #419745; white-space: pre-wrap;">
-                                ${message.replace(/\n/g, "<br>")}
+                                ${esc(message).replace(/\n/g, "<br>")}
                             </div>
                         </div>
                         <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;" />
                         <p style="color: #666; font-size: 12px;">
                             This email was sent from the CGC website contact form.<br>
-                            Reply directly to this email to respond to ${name} at ${email}.
+                            Reply directly to this email to respond to ${esc(name)} at ${esc(email)}.
                         </p>
                     </div>
                 `,
@@ -157,9 +177,14 @@ Reply directly to this email to respond to ${name} at ${email}.
         });
 
         if (!resendResponse.ok) {
-            const errorData = await resendResponse.json();
+            const errorData = await resendResponse.json().catch(() => ({}));
             console.error("Resend API error:", errorData);
-            throw new Error(errorData.message || "Failed to send email");
+            if (!saved) {
+                throw new Error(errorData.message || "Failed to send email");
+            }
+            // Enquiry is safely stored in the database and visible in the admin
+            // dashboard; do not show the visitor an error just because the
+            // notification email failed.
         }
 
         return NextResponse.json(

@@ -10,6 +10,7 @@ import { QuickContactForm } from "@/components/features/QuickContactForm";
 import { ALL_SERVICES } from "@/lib/services-data";
 import { db } from "@/lib/db";
 import { HomePageContent } from "@/components/sections/HomePageContent";
+import { parseCourses, type CourseBannerPublic } from "@/lib/course-banner";
 
 export const dynamic = 'force-dynamic';
 
@@ -73,9 +74,37 @@ export default async function Home() {
     console.error("Error fetching testimonials:", error);
   }
 
+  // Published course banners (managed from Admin > Course Banners)
+  let courseBanners: CourseBannerPublic[] = [];
+  try {
+    const rows = await db.courseBanner.findMany({
+      where: { published: true },
+      orderBy: { displayOrder: "asc" },
+    });
+    courseBanners = rows.map((b) => ({
+      id: b.id,
+      providerName: b.providerName,
+      providerTagline: b.providerTagline,
+      logoUrl: b.logoUrl,
+      badge: b.badge,
+      badgeNote: b.badgeNote,
+      headline: b.headline,
+      subheadline: b.subheadline,
+      description: b.description,
+      coursesIntro: b.coursesIntro,
+      courses: parseCourses(b.courses),
+      footerText: b.footerText,
+      ctaLabel: b.ctaLabel,
+      ctaHref: b.ctaHref,
+    }));
+  } catch (error) {
+    // Table may not exist yet on first deploy; never break the home page.
+    console.error("Error fetching course banners:", error);
+  }
+
   return (
     <>
-      <HomePageContent services={services} testimonials={testimonials} />
+      <HomePageContent services={services} testimonials={testimonials} courseBanners={courseBanners} />
     </>
   );
 }

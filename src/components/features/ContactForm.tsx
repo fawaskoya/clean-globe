@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
@@ -8,6 +8,7 @@ import { NAV_LINKS } from "@/lib/navigation";
 
 const SERVICE_OPTIONS = [
     "General Inquiry",
+    "Training / Certified Courses",
     ...(NAV_LINKS.find((l) => l.href === "/services")?.children?.map((c) => c.name) ?? []),
 ];
 
@@ -22,6 +23,22 @@ export function ContactForm() {
         message: "",
         consent: false,
     });
+    // Course enquiries arrive from the home-page course banner as /contact?course=<name>
+    const [courseParam, setCourseParam] = useState<string | null>(null);
+    useEffect(() => {
+        const course = new URLSearchParams(window.location.search).get("course")?.trim().slice(0, 150);
+        if (!course) return;
+        setCourseParam(course);
+        setFormData((prev) => ({
+            ...prev,
+            service: `Course: ${course}`,
+            message: prev.message || `I would like to enquire about the course: ${course}.`,
+        }));
+    }, []);
+    const serviceOptions = courseParam
+        ? [...SERVICE_OPTIONS, `Course: ${courseParam}`]
+        : SERVICE_OPTIONS;
+
     const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -203,7 +220,7 @@ export function ContactForm() {
                             onChange={handleChange}
                             value={formData.service}
                         >
-                            {SERVICE_OPTIONS.map((opt) => (
+                            {serviceOptions.map((opt) => (
                                 <option key={opt}>{opt}</option>
                             ))}
                         </select>

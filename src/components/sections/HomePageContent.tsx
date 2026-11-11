@@ -11,6 +11,8 @@ import { ValueProposition } from "@/components/sections/ValueProposition";
 import { Testimonials } from "@/components/features/Testimonials";
 import { QuickContactForm } from "@/components/features/QuickContactForm";
 import { Hero } from "@/components/sections/Hero";
+import { CourseBannerCarousel } from "@/components/sections/CourseBannerCarousel";
+import type { CourseBannerPublic } from "@/lib/course-banner";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -45,14 +47,18 @@ interface HomePageContentProps {
     image?: string;
     rating: number;
   }>;
+  courseBanners?: CourseBannerPublic[];
 }
 
-export function HomePageContent({ services, testimonials }: HomePageContentProps) {
+export function HomePageContent({ services, testimonials, courseBanners = [] }: HomePageContentProps) {
   return (
     <>
       <div className="flex flex-col">
         {/* Hero Section - Full width with vector graphics */}
         <Hero />
+
+        {/* Training / certified courses (managed in Admin > Course Banners) */}
+        <CourseBannerCarousel banners={courseBanners} />
 
         {/* Services Section */}
         <section className="bg-cream py-12 lg:py-16">

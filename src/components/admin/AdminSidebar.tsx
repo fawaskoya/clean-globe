@@ -12,6 +12,7 @@ import {
   UsersIcon,
   Cog6ToothIcon,
   UserGroupIcon,
+  AcademicCapIcon,
 } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ const navigation = [
   { name: "Blog", href: "/admin/blog", icon: DocumentTextIcon },
   { name: "Testimonials", href: "/admin/testimonials", icon: ChatBubbleLeftRightIcon },
   { name: "Advisory Board", href: "/admin/advisory-board", icon: UserGroupIcon },
+  { name: "Course Banners", href: "/admin/courses", icon: AcademicCapIcon },
   { name: "Contact Enquiries", href: "/admin/contacts", icon: EnvelopeIcon },
   { name: "Users", href: "/admin/users", icon: UsersIcon },
   { name: "Settings", href: "/admin/settings", icon: Cog6ToothIcon },
