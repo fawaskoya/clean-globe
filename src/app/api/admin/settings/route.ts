@@ -8,6 +8,9 @@ const settingsSchema = z.object({
   whatsappMessage: z.string().optional(),
   googleAnalyticsId: z.string().optional(),
   googleSearchConsole: z.string().optional(),
+  announcementEnabled: z.boolean().optional(),
+  announcementText: z.string().optional().nullable(),
+  announcementLink: z.string().optional().nullable(),
 });
 
 export async function GET() {
@@ -43,7 +46,11 @@ export async function PUT(request: Request) {
 
   try {
     const body = await request.json();
-    const data = settingsSchema.parse(body);
+    const parsed = settingsSchema.parse(body);
+    // Drop nulls from the form for nullable optional columns handled as strings
+    const data = Object.fromEntries(
+      Object.entries(parsed).filter(([, v]) => v !== undefined)
+    ) as typeof parsed;
 
     let settings = await db.siteSettings.findFirst();
 

@@ -8,6 +8,12 @@ import { cn } from "@/lib/utils";
 import { COMPANY_INFO } from "@/lib/constants";
 import { ReCaptchaProvider } from "@/components/providers/ReCaptchaProvider";
 import { WhatsAppCTA } from "@/components/features/WhatsAppCTA";
+import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
+import { ANNOUNCE_HEIGHT } from "@/lib/training";
+import { getPublishedCourses, getAnnouncement } from "@/lib/training-data";
+
+// Static pages re-fetch the Training menu / ticker at most once a minute.
+export const revalidate = 60;
 
 const oak = Inter({
   subsets: ["latin"],
@@ -94,16 +100,23 @@ const organizationLd = {
   sameAs: [],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
+  const [courses, announcement] = await Promise.all([getPublishedCourses(), getAnnouncement()]);
+  const trainingCourses = courses.map((c) => ({ title: c.title, slug: c.slug }));
 
   return (
-    <html lang="en" className={cn("scroll-smooth", oak.variable, astoria.variable)}>
+    <html
+      lang="en"
+      className={cn("scroll-smooth", oak.variable, astoria.variable)}
+      style={{ ["--announce-h" as string]: announcement ? ANNOUNCE_HEIGHT : "0px" } as React.CSSProperties}
+    >
       <body className="font-serif antialiased bg-cream text-forest flex flex-col min-h-screen">
         <ReCaptchaProvider reCaptchaKey={recaptchaSiteKey}>
-          <Header />
+          {announcement && <AnnouncementBar text={announcement.text} link={announcement.link} />}
+          <Header trainingCourses={trainingCourses} />
           <MainContent>{children}</MainContent>
           <Footer />
           <WhatsAppCTA />

@@ -8,7 +8,10 @@ export default function MainContent({ children }: { children: React.ReactNode })
     const isAdmin = pathname?.startsWith("/admin");
 
     return (
-        <main className={cn("flex-grow", isAdmin ? "pt-0" : "pt-24")}>
+        <main
+            className={cn("flex-grow", isAdmin ? "pt-0" : "pt-24")}
+            style={isAdmin ? undefined : { paddingTop: "calc(6rem + var(--announce-h, 0px))" }}
+        >
             {children}
         </main>
     );

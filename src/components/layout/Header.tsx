@@ -8,13 +8,30 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { COMPANY_INFO } from "@/lib/constants";
-import { NAV_LINKS } from "@/lib/navigation";
+import { NAV_LINKS, type NavLink } from "@/lib/navigation";
 import { DropdownMenu } from "./DropdownMenu";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Header() {
+interface HeaderProps {
+    /** Published training courses for the Training dropdown */
+    trainingCourses?: Array<{ title: string; slug: string }>;
+}
+
+export default function Header({ trainingCourses = [] }: HeaderProps) {
+    const navLinks: NavLink[] = NAV_LINKS.map((link) =>
+        link.href === "/training"
+            ? {
+                  ...link,
+                  children: [
+                      { name: "All courses", href: "/training" },
+                      ...trainingCourses.map((c) => ({ name: c.title, href: `/training/${c.slug}` })),
+                  ],
+              }
+            : link
+    );
+
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [hoveredLink, setHoveredLink] = useState<string | null>(null);
@@ -42,8 +59,9 @@ export default function Header() {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
+            style={{ top: "var(--announce-h, 0px)" }}
             className={cn(
-                "fixed inset-x-0 top-0 z-50 transition-all duration-300",
+                "fixed inset-x-0 z-50 transition-all duration-300",
                 scrolled ? "bg-white/95 backdrop-blur-md shadow-lg py-1.5" : "bg-white/80 backdrop-blur-sm py-2.5"
             )}
         >
@@ -52,7 +70,7 @@ export default function Header() {
                 aria-label="Global"
             >
                 {/* Logo - Enhanced and Bigger */}
-                <div className="flex lg:flex-1">
+                <div className="flex shrink-0 lg:flex-1 lg:min-w-[150px]">
                     <Link
                         href="/"
                         className="group relative -m-1.5 p-1.5"
@@ -108,8 +126,8 @@ export default function Header() {
                 </div>
 
                 {/* Desktop Navigation Links */}
-                <div className="hidden lg:flex lg:gap-x-8 xl:gap-x-12">
-                    {NAV_LINKS.map((item, index) => {
+                <div className="hidden lg:flex lg:gap-x-4 xl:gap-x-7">
+                    {navLinks.map((item, index) => {
                         const active = isActive(item.href);
 
                         // Check if any child is active
@@ -188,7 +206,7 @@ export default function Header() {
                 </div>
 
                 {/* CTA Button */}
-                <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+                <div className="hidden xl:flex xl:flex-1 xl:justify-end">
                     <motion.div
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -214,7 +232,7 @@ export default function Header() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm"
+                            className="fixed inset-0 z-[70] bg-black/20 backdrop-blur-sm"
                             onClick={() => setMobileMenuOpen(false)}
                         />
                         <DialogPanel
@@ -222,7 +240,7 @@ export default function Header() {
                             initial={{ x: "100%" }}
                             animate={{ x: 0 }}
                             exit={{ x: "100%" }}
-                            className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10 shadow-2xl"
+                            className="fixed inset-y-0 right-0 z-[70] w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10 shadow-2xl"
                         >
                             <div className="flex items-center justify-between mb-8">
                                 <Link
@@ -255,7 +273,7 @@ export default function Header() {
                             <div className="mt-6 flow-root">
                                 <div className="-my-6 divide-y divide-gray-200">
                                     <div className="space-y-1 py-6">
-                                        {NAV_LINKS.map((item, index) => {
+                                        {navLinks.map((item, index) => {
                                             const active = isActive(item.href);
                                             const hasActiveChild = item.children?.some(child =>
                                                 isActive(child.href) || child.children?.some(subChild => isActive(subChild.href))

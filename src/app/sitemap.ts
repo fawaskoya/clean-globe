@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/about/mission-vision`, changeFrequency: "yearly", priority: 0.5, lastModified: now },
     { url: `${SITE_URL}/about/advisory-board`, changeFrequency: "yearly", priority: 0.5, lastModified: now },
     { url: `${SITE_URL}/services`, changeFrequency: "monthly", priority: 0.8, lastModified: now },
+    { url: `${SITE_URL}/training`, changeFrequency: "weekly", priority: 0.9, lastModified: now },
     { url: `${SITE_URL}/projects`, changeFrequency: "weekly", priority: 0.7, lastModified: now },
     { url: `${SITE_URL}/insights`, changeFrequency: "weekly", priority: 0.8, lastModified: now },
     { url: `${SITE_URL}/contact`, changeFrequency: "monthly", priority: 0.8, lastModified: now },
@@ -23,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let serviceSlugs: string[] = ALL_SERVICES.map((s) => s.slug);
   let blogEntries: MetadataRoute.Sitemap = [];
   let projectEntries: MetadataRoute.Sitemap = [];
+  let trainingEntries: MetadataRoute.Sitemap = [];
 
   try {
     const dbServices = await db.service.findMany({
@@ -54,6 +56,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
       lastModified: p.updatedAt,
     }));
+
+    const courses = await db.trainingCourse.findMany({
+      where: { published: true },
+      select: { slug: true, updatedAt: true },
+    });
+    trainingEntries = courses.map((c) => ({
+      url: `${SITE_URL}/training/${c.slug}`,
+      changeFrequency: "weekly",
+      priority: 0.85,
+      lastModified: c.updatedAt,
+    }));
   } catch {
     // Fall back to static catalogue at build time when the DB is unreachable.
   }
@@ -65,5 +78,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: now,
   }));
 
-  return [...staticEntries, ...serviceEntries, ...projectEntries, ...blogEntries];
+  return [...staticEntries, ...serviceEntries, ...trainingEntries, ...projectEntries, ...blogEntries];
 }

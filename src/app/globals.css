@@ -57,3 +57,20 @@ h6 {
   background: #105213;
   /* deep */
 }
+/* ---- Announcement ticker ---- */
+@keyframes cgc-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-25%); }
+}
+.ticker-track {
+  animation: cgc-ticker 45s linear infinite;
+}
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+.ticker-viewport {
+  mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+}

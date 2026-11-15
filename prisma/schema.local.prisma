@@ -116,6 +116,9 @@ model SiteSettings {
   whatsappMessage       String?
   googleAnalyticsId     String?
   googleSearchConsole   String?
+  announcementEnabled   Boolean  @default(false)
+  announcementText      String?  // ticker text; use " | " to separate items
+  announcementLink      String?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 }
@@ -151,4 +154,27 @@ model CourseBanner {
   published     Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model TrainingCourse {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  title             String
+  programme         String   // e.g. "Net Zero Training Programme"
+  level             String?  // e.g. "Foundation · ISEP Certified"
+  summary           String
+  duration          String?
+  startDate         String?  @default("Commencing December 2026")
+  fee               String?  // blank = "Contact us for fees"
+  topics            String   // JSON string array
+  audience          String   // JSON string array
+  assessment        String?
+  entryRequirements String?
+  certification     String?
+  note              String?
+  brochureUrl       String?
+  displayOrder      Int      @default(0)
+  published         Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }

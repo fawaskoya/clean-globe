@@ -11,6 +11,9 @@ const settingsSchema = z.object({
   whatsappMessage: z.string().optional(),
   googleAnalyticsId: z.string().optional(),
   googleSearchConsole: z.string().optional(),
+  announcementEnabled: z.boolean().optional(),
+  announcementText: z.string().optional().nullable(),
+  announcementLink: z.string().optional().nullable(),
 });
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
@@ -36,7 +39,8 @@ export default function SettingsPage() {
         const response = await fetch("/api/admin/settings");
         if (!response.ok) throw new Error("Failed to fetch settings");
         const data = await response.json();
-        reset(data);
+        // Inputs can't hold null; convert nulls to empty strings for the form
+        reset(Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v === null ? "" : v])));
       } catch (err) {
         setError("Failed to load settings");
       } finally {
@@ -103,6 +107,41 @@ export default function SettingsPage() {
             {success}
           </div>
         )}
+
+        <div className="rounded-2xl border border-lime/40 bg-lime/5 p-6 space-y-4">
+          <div>
+            <h2 className="text-lg font-bold text-forest">Announcement Ticker</h2>
+            <p className="text-xs text-gray-500 mt-1">
+              The scrolling bar above the menu on every public page (e.g. training commencing December).
+            </p>
+          </div>
+          <label className="flex items-center gap-2 text-sm font-medium text-forest">
+            <input
+              type="checkbox"
+              {...register("announcementEnabled")}
+              className="h-4 w-4 rounded border-gray-300 text-lime focus:ring-lime"
+            />
+            Show the ticker on the website
+          </label>
+          <div>
+            <label className="block text-sm font-semibold text-forest mb-2">Ticker text</label>
+            <textarea
+              {...register("announcementText")}
+              rows={2}
+              placeholder="ISEP Certified Courses commencing December 2026 | Limited seats — enquire now"
+              className="w-full rounded-md border border-gray-200 px-4 py-2 bg-white focus:border-lime focus:ring-2 focus:ring-lime/20"
+            />
+            <p className="text-xs text-gray-500 mt-1">Separate messages with “ | ” — each becomes its own item in the scroll.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-forest mb-2">Ticker link</label>
+            <input
+              {...register("announcementLink")}
+              placeholder="/training"
+              className="w-full rounded-md border border-gray-200 px-4 py-2 bg-white focus:border-lime focus:ring-2 focus:ring-lime/20"
+            />
+          </div>
+        </div>
 
         <div>
           <label className="block text-sm font-semibold text-forest mb-2">

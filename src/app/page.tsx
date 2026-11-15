@@ -11,6 +11,8 @@ import { ALL_SERVICES } from "@/lib/services-data";
 import { db } from "@/lib/db";
 import { HomePageContent } from "@/components/sections/HomePageContent";
 import { parseCourses, type CourseBannerPublic } from "@/lib/course-banner";
+import { courseKey } from "@/lib/training";
+import { getPublishedCourses } from "@/lib/training-data";
 
 export const dynamic = 'force-dynamic';
 
@@ -102,9 +104,20 @@ export default async function Home() {
     console.error("Error fetching course banners:", error);
   }
 
+  // Map banner course names to their /training pages (e.g. "Introduction to Net-Zero")
+  const courseLinks: Record<string, string> = {};
+  for (const c of await getPublishedCourses()) {
+    courseLinks[courseKey(c.title)] = `/training/${c.slug}`;
+  }
+
   return (
     <>
-      <HomePageContent services={services} testimonials={testimonials} courseBanners={courseBanners} />
+      <HomePageContent
+        services={services}
+        testimonials={testimonials}
+        courseBanners={courseBanners}
+        courseLinks={courseLinks}
+      />
     </>
   );
 }

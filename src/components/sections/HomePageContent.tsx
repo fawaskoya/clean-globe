@@ -48,9 +48,10 @@ interface HomePageContentProps {
     rating: number;
   }>;
   courseBanners?: CourseBannerPublic[];
+  courseLinks?: Record<string, string>;
 }
 
-export function HomePageContent({ services, testimonials, courseBanners = [] }: HomePageContentProps) {
+export function HomePageContent({ services, testimonials, courseBanners = [], courseLinks = {} }: HomePageContentProps) {
   return (
     <>
       <div className="flex flex-col">
@@ -58,7 +59,7 @@ export function HomePageContent({ services, testimonials, courseBanners = [] }: 
         <Hero />
 
         {/* Training / certified courses (managed in Admin > Course Banners) */}
-        <CourseBannerCarousel banners={courseBanners} />
+        <CourseBannerCarousel banners={courseBanners} courseLinks={courseLinks} />
 
         {/* Services Section */}
         <section className="bg-cream py-12 lg:py-16">

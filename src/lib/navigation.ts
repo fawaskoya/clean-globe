@@ -26,6 +26,12 @@ export const NAV_LINKS: NavLink[] = [
       { name: "Net Zero Advisory", href: "/services/net-zero-advisory" },
     ],
   },
+  {
+    name: "Training",
+    href: "/training",
+    // Course links are filled in from Admin > Training Courses (see Header)
+    children: [{ name: "All courses", href: "/training" }],
+  },
   { name: "Projects", href: "/projects" },
   { name: "Insights", href: "/insights" },
   { name: "Contact", href: "/contact" },

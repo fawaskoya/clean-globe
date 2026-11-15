@@ -6,6 +6,7 @@ import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import type { CourseBannerPublic } from "@/lib/course-banner";
+import { courseKey } from "@/lib/training";
 
 const AUTOPLAY_MS = 9000;
 
@@ -13,7 +14,15 @@ function enquiryHref(course: string) {
   return `/contact?course=${encodeURIComponent(course)}`;
 }
 
-export function CourseBannerCarousel({ banners }: { banners: CourseBannerPublic[] }) {
+export function CourseBannerCarousel({
+  banners,
+  courseLinks = {},
+}: {
+  banners: CourseBannerPublic[];
+  courseLinks?: Record<string, string>;
+}) {
+  // Course chips open the course's detail page when one exists, else the enquiry form.
+  const courseHref = (course: string) => courseLinks[courseKey(course)] ?? enquiryHref(course);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const count = banners.length;
@@ -117,7 +126,7 @@ export function CourseBannerCarousel({ banners }: { banners: CourseBannerPublic[
                     {banner.courses.map((course) => (
                       <li key={course}>
                         <Link
-                          href={enquiryHref(course)}
+                          href={courseHref(course)}
                           className="inline-block rounded-full border border-[#BDD631]/40 px-4 py-1.5 text-sm font-semibold text-[#BDD631] transition hover:bg-[#BDD631] hover:text-navy"
                         >
                           {course}
