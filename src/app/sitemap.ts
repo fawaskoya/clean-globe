@@ -4,6 +4,9 @@ import { ALL_SERVICES } from "@/lib/services-data";
 
 const SITE_URL = "https://www.thecleanglobe.com";
 
+// Rebuild hourly so new courses, posts and projects appear without a redeploy.
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
